@@ -2,6 +2,8 @@
 
 A minimal, self-made 8-bit retro pixel timer, Pomodoro tracker, and stopwatch designed for focus and simplicity. Built with pure HTML, Vanilla CSS, and JavaScript.
 
+🌐 **Live Demo**: [https://timer-three-psi-89.vercel.app/](https://timer-three-psi-89.vercel.app/)
+
 ## ✨ Features
 
 - **3 Modes**: Countdown Timer, Pomodoro Tracker (with cycle indicators), and Stopwatch.
@@ -13,7 +15,7 @@ A minimal, self-made 8-bit retro pixel timer, Pomodoro tracker, and stopwatch de
 
 ## 🚀 Quick Start
 
-No dependencies or build steps required. Simply open `index.html` in any browser or serve locally:
+No dependencies or build steps required. Visit the live link above, open `index.html` directly in any browser, or serve locally:
 
 ```bash
 python -m http.server 8000
