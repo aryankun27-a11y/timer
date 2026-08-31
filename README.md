@@ -2,7 +2,7 @@
 
 A minimal, self-made 8-bit retro pixel timer, Pomodoro tracker, and stopwatch designed for focus and simplicity. Built with pure HTML, Vanilla CSS, and JavaScript.
 
-🌐 **Live Demo**: [https://timer-three-psi-89.vercel.app/](https://timer-three-psi-89.vercel.app/)
+🌐 **Live Website**: [https://timer-three-psi-89.vercel.app/](https://timer-three-psi-89.vercel.app/)
 
 ## ✨ Features
 
@@ -13,15 +13,11 @@ A minimal, self-made 8-bit retro pixel timer, Pomodoro tracker, and stopwatch de
 - **Daily Focus Stats**: Automatically records daily focus time and active streaks in `localStorage`.
 - **Keyboard Shortcuts**: Built for speed (`Space` to start/pause, `M` for mode, `1-9` for quick time presets, `E` to edit custom time).
 
-## 🚀 Quick Start
+## 🚀 How to Use
 
-No dependencies or build steps required. Visit the live link above, open `index.html` directly in any browser, or serve locally:
+No installation or dependencies required! You can use the timer directly online at:
 
-```bash
-python -m http.server 8000
-```
-
-Then open `http://localhost:8000` in your browser.
+👉 **[https://timer-three-psi-89.vercel.app/](https://timer-three-psi-89.vercel.app/)**
 
 ## ⌨️ Shortcuts
 
