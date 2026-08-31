@@ -1,0 +1,427 @@
+/* ==========================================================================
+   8-Bit Retro Pixel Timer Design System (Handjet Typography)
+   ========================================================================== */
+
+:root {
+  --font-pixel: 'Handjet', monospace;
+  
+  --bg-color: #000000;
+  --text-color: #FFFFFF;
+  --text-dim: rgba(255, 255, 255, 0.65);
+  --border-color: #FFFFFF;
+  --progress-track: rgba(255, 255, 255, 0.15);
+  --dialog-backdrop: rgba(0, 0, 0, 0.85);
+  
+  --transition-expand: 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] {
+  --bg-color: #FFFFFF;
+  --text-color: #000000;
+  --text-dim: rgba(0, 0, 0, 0.65);
+  --border-color: #000000;
+  --progress-track: rgba(0, 0, 0, 0.12);
+  --dialog-backdrop: rgba(255, 255, 255, 0.85);
+}
+
+/* ==========================================================================
+   Reset & Base Setup
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-pixel);
+  overflow: hidden;
+  transition: background-color 200ms ease, color 200ms ease;
+  image-rendering: pixelated;
+}
+
+/* ==========================================================================
+   App Container & Viewport Layout
+   ========================================================================== */
+
+.pixel-app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem 3.25rem;
+  position: relative;
+  cursor: default;
+}
+
+/* ==========================================================================
+   Top Header (Mode Switcher, Theme & Tick Buttons, Help)
+   ========================================================================== */
+
+.app-topbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  transition: opacity var(--transition-expand), transform var(--transition-expand);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.pixel-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-family: var(--font-pixel);
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.pixel-btn:hover {
+  opacity: 0.75;
+}
+
+.pixel-btn:active {
+  transform: scale(0.96);
+}
+
+.pixel-brand {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.top-pill-btn {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.btn-pixel-help {
+  font-size: 1.85rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Main Center Stage
+   ========================================================================== */
+
+.app-main {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  z-index: 5;
+}
+
+/* Pomodoro Cycle Indicator */
+.pomo-tracker {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+  transition: opacity var(--transition-expand);
+}
+
+.pomo-phase {
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.pomo-blocks {
+  letter-spacing: 0.35em;
+  color: var(--text-color);
+  font-size: 1.1em;
+}
+
+/* Digits Wrapper */
+.digits-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform var(--transition-expand);
+}
+
+/* Opening state digits */
+.pixel-digits {
+  font-family: var(--font-pixel);
+  font-size: clamp(6.5rem, 16vw, 11rem);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: 0.08em;
+  color: var(--text-color);
+  font-variant-numeric: tabular-nums;
+  transition: font-size var(--transition-expand);
+}
+
+/* Scroll to adjust tooltip */
+.scroll-tooltip {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--text-dim);
+  border: 1px dashed var(--text-dim);
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 220ms ease, transform 220ms ease;
+  pointer-events: none;
+  margin-top: 0.75rem;
+}
+
+.pixel-app[data-state="idle"] .digits-wrapper:hover .scroll-tooltip {
+  opacity: 0.85;
+  transform: translateY(0);
+}
+
+
+/* Inline Time Edit Overlay */
+.time-edit-overlay {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-edit-overlay input {
+  background: transparent;
+  border: 2px dashed var(--border-color);
+  color: var(--text-color);
+  font-family: var(--font-pixel);
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  width: 200px;
+  padding: 0.4rem;
+  outline: none;
+}
+
+.edit-hint {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+/* ==========================================================================
+   Bottom Bar (Daily Stats)
+   ========================================================================== */
+
+.app-bottombar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  transition: opacity var(--transition-expand);
+}
+
+.bottom-stats-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 0.85rem;
+  transition: opacity var(--transition-expand);
+}
+
+.daily-stats {
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  text-transform: lowercase;
+}
+
+/* ==========================================================================
+   Running / Active State (Image 2: Massive Fullscreen Display)
+   ========================================================================== */
+
+.pixel-app[data-state="running"] .app-topbar,
+.pixel-app[data-state="running"] .bottom-stats-row {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+}
+
+.pixel-app[data-state="running"] .pixel-digits {
+  font-size: clamp(12rem, 30vw, 24rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.pixel-app[data-state="running"] .action-caption {
+  font-size: clamp(1rem, 2.2vw, 1.4rem);
+  font-weight: 600;
+  margin-top: 2rem;
+}
+
+/* Paused State */
+.pixel-app[data-state="paused"] .pixel-digits {
+  font-size: clamp(12rem, 30vw, 24rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  animation: pixelBlink 1.4s infinite;
+}
+
+@keyframes pixelBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Completed Flash Animation */
+.pixel-app[data-state="completed"] .pixel-digits {
+  animation: completeFlash 0.5s step-end infinite;
+}
+
+@keyframes completeFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ==========================================================================
+   Pixel Dialog (Shortcuts Help)
+   ========================================================================== */
+
+.pixel-dialog {
+  border: 3px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  padding: 0;
+  max-width: 460px;
+  width: calc(100% - 3rem);
+  margin: auto;
+  z-index: 99;
+}
+
+.pixel-dialog::backdrop {
+  background-color: var(--dialog-backdrop);
+}
+
+.dialog-content {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+}
+
+.dialog-close {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-family: var(--font-pixel);
+  font-size: 1.85rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dialog-close:hover {
+  opacity: 0.6;
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.shortcut-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.shortcut-line:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.shortcut-line .key {
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.shortcut-line .desc {
+  color: var(--text-dim);
+}
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .pixel-app {
+    padding: 1.5rem 1.5rem;
+  }
+
+  .pixel-brand {
+    font-size: 1.75rem;
+  }
+
+  .top-pill-btn {
+    font-size: 1.05rem;
+  }
+
+  .pixel-digits {
+    font-size: clamp(5rem, 20vw, 8.5rem);
+  }
+
+  .pixel-app[data-state="running"] .pixel-digits,
+  .pixel-app[data-state="paused"] .pixel-digits {
+    font-size: clamp(8rem, 28vw, 15rem);
+  }
+}

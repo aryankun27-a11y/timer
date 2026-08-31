@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>timer</title>
+  <meta name="description" content="A minimal 8-bit retro pixel monochrome timer, pomodoro & stopwatch.">
+  
+  <!-- Handjet Pixel Font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="pixel-app" id="app" data-state="idle">
+    
+    <!-- Top Bar (Mode Switcher, Theme Toggle, Tick Toggle, Help) -->
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <button type="button" class="pixel-btn pixel-brand" id="brand-mode-btn" title="Click to switch mode (M)">
+          <span id="mode-text">timer</span>
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Theme Toggle (Light / Dark) -->
+        <button type="button" class="pixel-btn top-pill-btn" id="btn-theme" title="Toggle Light/Dark Theme (T)">
+          <span id="theme-btn-text">[light]</span>
+        </button>
+
+        <!-- Second Metronome Tick Toggle -->
+        <button type="button" class="pixel-btn top-pill-btn" id="btn-tick" title="Toggle 1-Second Metronome Tick (K)">
+          <span id="tick-btn-text">[tick: off]</span>
+        </button>
+
+        <!-- Help Modal Button -->
+        <button type="button" class="pixel-btn btn-pixel-help" id="btn-help" aria-label="Shortcuts Help" title="Shortcuts (?)">
+          ?
+        </button>
+      </div>
+    </header>
+
+    <!-- Center Hero Display Area -->
+    <main class="app-main" id="main-area">
+      
+      <!-- Pomodoro Session Tracker Indicator (Visible in Pomodoro Mode) -->
+      <div class="pomo-tracker" id="pomo-tracker" style="display: none;">
+        <span class="pomo-phase" id="pomo-phase">focus</span>
+        <span class="pomo-blocks" id="pomo-blocks">[● ● ○ ○]</span>
+      </div>
+
+      <!-- Digits Container (Click to Start / Pause, Scroll to Adjust Duration) -->
+      <div class="digits-wrapper" id="digits-wrapper" title="Click to Start / Pause (Space) • Scroll to Adjust Minutes">
+        <div class="pixel-digits" id="pixel-digits">25:00</div>
+        <div class="scroll-tooltip" id="scroll-tooltip">scroll to adjust</div>
+      </div>
+
+
+      <!-- Hidden Inline Time Setup (press 'E' or type) -->
+      <div class="time-edit-overlay" id="time-edit-overlay" style="display: none;">
+        <input type="text" id="time-input" maxlength="5" value="25:00" placeholder="25:00" autocomplete="off" spellcheck="false">
+        <span class="edit-hint">press enter to set</span>
+      </div>
+
+    </main>
+
+    <!-- Bottom Bar (Daily Focus Statistics) -->
+    <footer class="app-bottombar">
+      <div class="bottom-stats-row">
+        <div class="daily-stats" id="daily-stats">
+          today: 0m • 0 sessions
+        </div>
+      </div>
+    </footer>
+
+    <!-- Pixel Shortcuts & Settings Dialog -->
+    <dialog class="pixel-dialog" id="help-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2 id="dialog-title">controls</h2>
+          <button type="button" class="dialog-close" id="btn-close-dialog">&times;</button>
+        </div>
+        
+        <div class="dialog-body">
+          <div class="shortcut-line">
+            <span class="key">space / click</span>
+            <span class="desc">start / pause</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">scroll / drag</span>
+            <span class="desc">adjust minutes</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">r</span>
+            <span class="desc">restart / reset</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">m</span>
+            <span class="desc">mode (timer / pomo / stopwatch)</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">t</span>
+            <span class="desc">toggle dark / light theme</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">k</span>
+            <span class="desc">toggle 1s tick metronome</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">s</span>
+            <span class="desc">toggle completion sound</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">1-9</span>
+            <span class="desc">quick presets (5, 10, 25m..)</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">e</span>
+            <span class="desc">edit custom time</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">f</span>
+            <span class="desc">browser fullscreen</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">esc</span>
+            <span class="desc">close / exit</span>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
