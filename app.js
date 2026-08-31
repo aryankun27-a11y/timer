@@ -204,6 +204,46 @@
   }
 
   /* ==========================================================================
+     Screen Wake Lock Manager (Prevents screen dimming / sleep while running)
+     ========================================================================== */
+  class PixelWakeLockManager {
+    constructor() {
+      this.wakeLock = null;
+      this.isSupported = 'wakeLock' in navigator;
+      this.isActiveTarget = false;
+
+      document.addEventListener('visibilitychange', () => {
+        if (this.isActiveTarget && document.visibilityState === 'visible') {
+          this.request();
+        }
+      });
+    }
+
+    async request() {
+      this.isActiveTarget = true;
+      if (!this.isSupported) return;
+      try {
+        if (!this.wakeLock) {
+          this.wakeLock = await navigator.wakeLock.request('screen');
+          this.wakeLock.addEventListener('release', () => {
+            this.wakeLock = null;
+          });
+        }
+      } catch (err) {}
+    }
+
+    async release() {
+      this.isActiveTarget = false;
+      if (this.wakeLock) {
+        try {
+          await this.wakeLock.release();
+        } catch (err) {}
+        this.wakeLock = null;
+      }
+    }
+  }
+
+  /* ==========================================================================
      Pixel Timer Engine (Timer, Pomodoro & Stopwatch)
      ========================================================================== */
   class PixelTimerEngine {
@@ -465,10 +505,11 @@
      UI Controller
      ========================================================================== */
   class PixelUIController {
-    constructor(engine, sound, stats) {
+    constructor(engine, sound, stats, wakeLock) {
       this.engine = engine;
       this.sound = sound;
       this.stats = stats;
+      this.wakeLock = wakeLock;
 
       this.dom = {
         app: document.getElementById('app'),
@@ -732,6 +773,13 @@
     render(snapshot) {
       const { mode, state, displaySeconds, progressFraction, pomoPhase, pomoCompletedCycles } = snapshot;
 
+      // Request or release Screen Wake Lock to prevent device display sleep
+      if (state === 'running') {
+        this.wakeLock.request();
+      } else {
+        this.wakeLock.release();
+      }
+
       // Update state data attribute
       this.dom.app.setAttribute('data-state', state);
 
@@ -780,6 +828,7 @@
      ========================================================================== */
   const sound = new PixelSoundEngine();
   const stats = new DailyStatsManager();
+  const wakeLock = new PixelWakeLockManager();
   const engine = new PixelTimerEngine(sound, stats);
-  new PixelUIController(engine, sound, stats);
+  new PixelUIController(engine, sound, stats, wakeLock);
 })();
