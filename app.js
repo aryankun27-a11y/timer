@@ -209,38 +209,89 @@
   class PixelWakeLockManager {
     constructor() {
       this.wakeLock = null;
+      this.videoElem = null;
       this.isSupported = 'wakeLock' in navigator;
       this.isActiveTarget = false;
 
       document.addEventListener('visibilitychange', () => {
         if (this.isActiveTarget && document.visibilityState === 'visible') {
-          this.request();
+          this.enable();
         }
       });
     }
 
-    async request() {
+    async enable() {
       this.isActiveTarget = true;
-      if (!this.isSupported) return;
-      try {
-        if (!this.wakeLock) {
+
+      // Method 1: Native Web Wake Lock API
+      if (this.isSupported && !this.wakeLock) {
+        try {
           this.wakeLock = await navigator.wakeLock.request('screen');
           this.wakeLock.addEventListener('release', () => {
             this.wakeLock = null;
           });
+        } catch (err) {}
+      }
+
+      // Method 2: Invisible Canvas Stream Video Loop Fallback (Guarantees screen stays awake on iOS Safari & mobile battery saver)
+      try {
+        if (!this.videoElem) {
+          const canvas = document.createElement('canvas');
+          canvas.width = 2;
+          canvas.height = 2;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, 2, 2);
+
+          this.videoElem = document.createElement('video');
+          this.videoElem.setAttribute('playsinline', '');
+          this.videoElem.setAttribute('webkit-playsinline', '');
+          this.videoElem.setAttribute('muted', '');
+          this.videoElem.muted = true;
+          this.videoElem.setAttribute('loop', '');
+          this.videoElem.style.position = 'fixed';
+          this.videoElem.style.top = '-9999px';
+          this.videoElem.style.left = '-9999px';
+          this.videoElem.style.width = '1px';
+          this.videoElem.style.height = '1px';
+          this.videoElem.style.opacity = '0';
+          this.videoElem.style.pointerEvents = 'none';
+
+          if ('captureStream' in canvas) {
+            this.videoElem.srcObject = canvas.captureStream(1);
+          }
+          document.body.appendChild(this.videoElem);
         }
-      } catch (err) {}
+
+        if (this.videoElem && this.videoElem.paused) {
+          const playPromise = this.videoElem.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {});
+          }
+        }
+      } catch (e) {}
     }
 
-    async release() {
+    async disable() {
       this.isActiveTarget = false;
+
       if (this.wakeLock) {
         try {
           await this.wakeLock.release();
         } catch (err) {}
         this.wakeLock = null;
       }
+
+      if (this.videoElem && !this.videoElem.paused) {
+        try {
+          this.videoElem.pause();
+        } catch (e) {}
+      }
     }
+
+    // Legacy method aliases
+    request() { return this.enable(); }
+    release() { return this.disable(); }
   }
 
   /* ==========================================================================
@@ -689,8 +740,10 @@
       this.sound.initContext();
       if (this.engine.state === 'running') {
         this.engine.pause();
+        this.wakeLock.disable();
         this.sound.playBeep(380, 0.07);
       } else {
+        this.wakeLock.enable();
         this.engine.start();
         this.sound.playBeep(660, 0.08);
       }
@@ -698,6 +751,7 @@
 
     handleStart() {
       this.sound.initContext();
+      this.wakeLock.enable();
       this.engine.start();
       this.sound.playBeep(660, 0.08);
     }
@@ -705,12 +759,14 @@
     handlePause() {
       this.sound.initContext();
       this.engine.pause();
+      this.wakeLock.disable();
       this.sound.playBeep(380, 0.07);
     }
 
     handleRestart() {
       this.sound.initContext();
       this.engine.reset();
+      this.wakeLock.disable();
       this.sound.playBeep(350, 0.08);
     }
 
