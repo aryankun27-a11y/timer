@@ -33,6 +33,11 @@
           <span id="theme-btn-text">[light]</span>
         </button>
 
+        <!-- Sound Chime Toggle -->
+        <button type="button" class="pixel-btn top-pill-btn" id="btn-sound" title="Toggle Sound Chime (S)">
+          <span id="sound-btn-text">[sound: on]</span>
+        </button>
+
         <!-- Second Metronome Tick Toggle -->
         <button type="button" class="pixel-btn top-pill-btn" id="btn-tick" title="Toggle 1-Second Metronome Tick (K)">
           <span id="tick-btn-text">[tick: off]</span>
@@ -54,16 +59,16 @@
         <span class="pomo-blocks" id="pomo-blocks">[● ● ○ ○]</span>
       </div>
 
-      <!-- Digits Container (Click to Start / Pause, Scroll to Adjust Duration) -->
-      <div class="digits-wrapper" id="digits-wrapper" title="Click to Start / Pause (Space) • Scroll to Adjust Minutes">
+      <!-- Digits Container (Click to Start / Pause, Scroll to Adjust Minutes) -->
+      <div class="digits-wrapper" id="digits-wrapper" title="Click to Start / Pause (Space) • Double-click or Press E to Edit • Scroll to Adjust Minutes">
         <div class="pixel-digits" id="pixel-digits">25:00</div>
         <div class="scroll-tooltip" id="scroll-tooltip">scroll to adjust</div>
       </div>
 
 
-      <!-- Hidden Inline Time Setup (press 'E' or type) -->
+      <!-- Hidden Inline Time Setup (press 'E', double-click digits, or type minutes) -->
       <div class="time-edit-overlay" id="time-edit-overlay" style="display: none;">
-        <input type="text" id="time-input" maxlength="5" value="25:00" placeholder="25:00" autocomplete="off" spellcheck="false">
+        <input type="text" id="time-input" maxlength="8" value="25:00" placeholder="25:00" autocomplete="off" spellcheck="false">
         <span class="edit-hint">press enter to set</span>
       </div>
 
@@ -92,8 +97,16 @@
             <span class="desc">start / pause</span>
           </div>
           <div class="shortcut-line">
-            <span class="key">scroll / drag</span>
+            <span class="key">scroll</span>
             <span class="desc">adjust minutes</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">double-click / e</span>
+            <span class="desc">edit custom time</span>
+          </div>
+          <div class="shortcut-line">
+            <span class="key">0-9</span>
+            <span class="desc">type minutes directly (e.g. 5, 25)</span>
           </div>
           <div class="shortcut-line">
             <span class="key">r</span>
@@ -109,19 +122,11 @@
           </div>
           <div class="shortcut-line">
             <span class="key">k</span>
-            <span class="desc">toggle 1s tick metronome</span>
+            <span class="desc">toggle 1s metronome tick</span>
           </div>
           <div class="shortcut-line">
             <span class="key">s</span>
-            <span class="desc">toggle completion sound</span>
-          </div>
-          <div class="shortcut-line">
-            <span class="key">1-9</span>
-            <span class="desc">quick presets (5, 10, 25m..)</span>
-          </div>
-          <div class="shortcut-line">
-            <span class="key">e</span>
-            <span class="desc">edit custom time</span>
+            <span class="desc">toggle sound</span>
           </div>
           <div class="shortcut-line">
             <span class="key">f</span>

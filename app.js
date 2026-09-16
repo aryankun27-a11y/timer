@@ -196,8 +196,13 @@
         timeStr = `${minutes}m`;
       }
 
+      let summaryText = `today: ${timeStr} • ${record.sessions} session${record.sessions === 1 ? '' : 's'}`;
+      if (this.data.streak > 0) {
+        summaryText += ` • streak: ${this.data.streak}d`;
+      }
+
       return {
-        text: `today: ${timeStr} • ${record.sessions} session${record.sessions === 1 ? '' : 's'}`,
+        text: summaryText,
         streak: this.data.streak || 0
       };
     }
@@ -322,6 +327,7 @@
       this.lastTickSecond = 0;
 
       this.animationFrameId = null;
+      this.backgroundTimerId = null;
       this.listeners = [];
 
       this.loadPreferences();
@@ -473,7 +479,7 @@
     startLoop() {
       this.stopLoop();
 
-      const tick = () => {
+      const processTick = () => {
         if (this.state !== 'running') return;
 
         const now = Date.now();
@@ -495,10 +501,23 @@
         }
 
         this.notify();
-        this.animationFrameId = requestAnimationFrame(tick);
+      };
+
+      const tick = () => {
+        if (this.state !== 'running') return;
+        processTick();
+        if (this.state === 'running') {
+          this.animationFrameId = requestAnimationFrame(tick);
+        }
       };
 
       this.animationFrameId = requestAnimationFrame(tick);
+
+      // Background-safe interval backup (handles tab backgrounding when requestAnimationFrame pauses)
+      this.backgroundTimerId = setInterval(() => {
+        if (this.state !== 'running') return;
+        processTick();
+      }, 500);
     }
 
     handleTimerComplete() {
@@ -531,6 +550,10 @@
       if (this.animationFrameId) {
         cancelAnimationFrame(this.animationFrameId);
         this.animationFrameId = null;
+      }
+      if (this.backgroundTimerId) {
+        clearInterval(this.backgroundTimerId);
+        this.backgroundTimerId = null;
       }
     }
 
@@ -568,6 +591,8 @@
         modeText: document.getElementById('mode-text'),
         btnTheme: document.getElementById('btn-theme'),
         themeBtnText: document.getElementById('theme-btn-text'),
+        btnSound: document.getElementById('btn-sound'),
+        soundBtnText: document.getElementById('sound-btn-text'),
         btnTick: document.getElementById('btn-tick'),
         tickBtnText: document.getElementById('tick-btn-text'),
         btnHelp: document.getElementById('btn-help'),
@@ -591,7 +616,12 @@
       this.keyBuffer = '';
       this.keyBufferTimeout = null;
 
+      this.lastRenderedState = null;
+      this.lastDisplayStr = '';
+      this.lastDocTitle = '';
+
       this.initTheme();
+      this.initSoundUI();
       this.initTickUI();
       this.bindEvents();
       this.engine.subscribe(this.render.bind(this));
@@ -612,6 +642,19 @@
       this.sound.playBeep(600, 0.05);
     }
 
+    initSoundUI() {
+      if (this.dom.soundBtnText) {
+        this.dom.soundBtnText.textContent = this.sound.soundEnabled ? '[sound: on]' : '[sound: off]';
+      }
+    }
+
+    toggleSound() {
+      const enabled = this.sound.toggleSound();
+      if (this.dom.soundBtnText) {
+        this.dom.soundBtnText.textContent = enabled ? '[sound: on]' : '[sound: off]';
+      }
+    }
+
     initTickUI() {
       this.dom.tickBtnText.textContent = this.sound.tickEnabled ? '[tick: on]' : '[tick: off]';
     }
@@ -628,14 +671,22 @@
         this.handleTogglePlay();
       });
 
-      // Mouse Wheel on digits to adjust time
+      // Mouse Wheel on digits to adjust time (ignored in stopwatch mode)
       this.dom.digitsWrapper.addEventListener('wheel', (e) => {
-        if (this.engine.state !== 'idle') return;
+        if (this.engine.state !== 'idle' || this.engine.mode === 'stopwatch') return;
         e.preventDefault();
         const delta = e.deltaY < 0 ? (e.shiftKey ? 5 : 1) : (e.shiftKey ? -5 : -1);
         this.engine.adjustMinutes(delta);
         this.sound.playBeep(520, 0.03);
       }, { passive: false });
+
+      // Double-click on digits to open custom time editor (mouse & touch friendly)
+      this.dom.digitsWrapper.addEventListener('dblclick', (e) => {
+        if (this.engine.state === 'idle' && this.engine.mode !== 'stopwatch') {
+          e.stopPropagation();
+          this.openTimeEdit();
+        }
+      });
 
       // Mode Switcher
       this.dom.brandModeBtn.addEventListener('click', (e) => {
@@ -649,6 +700,13 @@
         e.stopPropagation();
         this.toggleTheme();
       });
+
+      if (this.dom.btnSound) {
+        this.dom.btnSound.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.toggleSound();
+        });
+      }
 
       this.dom.btnTick.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -665,12 +723,19 @@
         this.dom.helpDialog.close();
       });
 
-      // Time Edit Input
+      // Time Edit Input keyboard handling
       this.dom.timeInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           this.applyTimeEdit();
         } else if (e.key === 'Escape') {
           this.cancelTimeEdit();
+        }
+      });
+
+      // Time Edit Input blur (clicking outside closes cleanly)
+      this.dom.timeInput.addEventListener('blur', () => {
+        if (this.isEditing) {
+          this.applyTimeEdit();
         }
       });
 
@@ -705,7 +770,7 @@
           this.toggleTick();
         } else if (e.key.toLowerCase() === 's') {
           e.preventDefault();
-          this.sound.toggleSound();
+          this.toggleSound();
         } else if (e.key.toLowerCase() === 'f') {
           e.preventDefault();
           this.toggleNativeFullscreen();
@@ -829,30 +894,39 @@
     render(snapshot) {
       const { mode, state, displaySeconds, progressFraction, pomoPhase, pomoCompletedCycles } = snapshot;
 
-      // Request or release Screen Wake Lock to prevent device display sleep
-      if (state === 'running') {
-        this.wakeLock.request();
-      } else {
-        this.wakeLock.release();
+      // Only transition Screen Wake Lock and data-state when state changes
+      if (this.lastRenderedState !== state) {
+        this.lastRenderedState = state;
+        if (state === 'running') {
+          this.wakeLock.request();
+        } else {
+          this.wakeLock.release();
+        }
+        this.dom.app.setAttribute('data-state', state);
       }
 
-      // Update state data attribute
-      this.dom.app.setAttribute('data-state', state);
-
       // Mode label text
-      this.dom.modeText.textContent = mode;
+      if (this.dom.modeText.textContent !== mode) {
+        this.dom.modeText.textContent = mode;
+      }
 
       // Format digits
       const timeStr = this.formatTimeString(displaySeconds);
-      this.dom.pixelDigits.textContent = timeStr;
+      if (this.lastDisplayStr !== timeStr) {
+        this.lastDisplayStr = timeStr;
+        this.dom.pixelDigits.textContent = timeStr;
+      }
 
       // Pomodoro Session Tracker
       if (mode === 'pomodoro') {
         this.dom.pomoTracker.style.display = 'flex';
-        this.dom.pomoPhase.textContent = pomoPhase.replace('_', ' ');
+        const phaseLabel = pomoPhase.replace('_', ' ');
+        if (this.dom.pomoPhase.textContent !== phaseLabel) {
+          this.dom.pomoPhase.textContent = phaseLabel;
+        }
 
-        // Render 4 session blocks [● ● ○ ○]
-        const cycleInSet = pomoCompletedCycles % 4;
+        // Render 4 session blocks [● ● ○ ○] (long_break displays all 4 full blocks)
+        const cycleInSet = (pomoPhase === 'long_break') ? 4 : (pomoCompletedCycles % 4);
         let blocks = '';
         for (let i = 0; i < 4; i++) {
           blocks += (i < cycleInSet) ? '● ' : '○ ';
@@ -864,17 +938,22 @@
 
       // Update Daily Stats summary
       const statsSummary = this.stats.getTodaySummary();
-      this.dom.dailyStats.textContent = statsSummary.text;
+      if (this.dom.dailyStats.textContent !== statsSummary.text) {
+        this.dom.dailyStats.textContent = statsSummary.text;
+      }
 
-      // Document Title
+      // Document Title (throttled to avoid redundant DOM updates)
+      let titleStr = mode;
       if (state === 'running') {
-        document.title = `${timeStr} — ${mode}`;
+        titleStr = `${timeStr} — ${mode}`;
       } else if (state === 'paused') {
-        document.title = `[paused] ${timeStr}`;
+        titleStr = `[paused] ${timeStr}`;
       } else if (state === 'completed') {
-        document.title = `time's up!`;
-      } else {
-        document.title = mode;
+        titleStr = `time's up!`;
+      }
+      if (this.lastDocTitle !== titleStr) {
+        this.lastDocTitle = titleStr;
+        document.title = titleStr;
       }
     }
   }

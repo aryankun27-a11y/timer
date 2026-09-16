@@ -286,12 +286,6 @@ html, body {
   letter-spacing: 0.06em;
 }
 
-.pixel-app[data-state="running"] .action-caption {
-  font-size: clamp(1rem, 2.2vw, 1.4rem);
-  font-weight: 600;
-  margin-top: 2rem;
-}
-
 /* Paused State */
 .pixel-app[data-state="paused"] .pixel-digits {
   font-size: clamp(12rem, 30vw, 24rem);
