@@ -5,24 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>timer</title>
   <meta name="description" content="A minimal 8-bit retro pixel monochrome timer, pomodoro & stopwatch.">
-  
+
   <!-- Preload local Handjet Pixel Font for instant, zero-flicker loading -->
   <link rel="preload" href="handjet.woff2" as="font" type="font/woff2" crossorigin>
 
   <!-- Handjet Pixel Font fallback from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400..900&display=block" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400..900&amp;display=block" rel="stylesheet">
+
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  
   <link rel="stylesheet" href="styles.css">
-  <noscript><style>.pixel-app { opacity: 1 !important; }</style></noscript>
 </head>
+
 <body>
 
   <div class="pixel-app" id="app" data-state="idle">
-    
+
     <!-- Top Bar (Mode Switcher, Theme Toggle, Tick Toggle, Help) -->
     <header class="app-topbar">
       <div class="topbar-left">
@@ -48,7 +47,8 @@
         </button>
 
         <!-- Help Modal Button -->
-        <button type="button" class="pixel-btn btn-pixel-help" id="btn-help" aria-label="Shortcuts Help" title="Shortcuts (?)">
+        <button type="button" class="pixel-btn btn-pixel-help" id="btn-help" aria-label="Shortcuts Help"
+          title="Shortcuts (?)">
           ?
         </button>
       </div>
@@ -56,7 +56,7 @@
 
     <!-- Center Hero Display Area -->
     <main class="app-main" id="main-area">
-      
+
       <!-- Pomodoro Session Tracker Indicator (Visible in Pomodoro Mode) -->
       <div class="pomo-tracker" id="pomo-tracker" style="display: none;">
         <span class="pomo-phase" id="pomo-phase">focus</span>
@@ -64,7 +64,8 @@
       </div>
 
       <!-- Digits Container (Click to Start / Pause, Scroll to Adjust Minutes) -->
-      <div class="digits-wrapper" id="digits-wrapper" title="Click to Start / Pause (Space) • Double-click or Press E to Edit • Scroll to Adjust Minutes">
+      <div class="digits-wrapper" id="digits-wrapper"
+        title="Click to Start / Pause (Space) • Double-click or Press E to Edit • Scroll to Adjust Minutes">
         <div class="pixel-digits" id="pixel-digits">25:00</div>
         <div class="scroll-tooltip" id="scroll-tooltip">scroll to adjust</div>
       </div>
@@ -72,7 +73,8 @@
 
       <!-- Hidden Inline Time Setup (press 'E', double-click digits, or type minutes) -->
       <div class="time-edit-overlay" id="time-edit-overlay" style="display: none;">
-        <input type="text" id="time-input" maxlength="8" value="25:00" placeholder="25:00" autocomplete="off" spellcheck="false">
+        <input type="text" id="time-input" maxlength="8" value="25:00" placeholder="25:00" autocomplete="off"
+          spellcheck="false">
         <span class="edit-hint">press enter to set</span>
       </div>
 
@@ -94,7 +96,7 @@
           <h2 id="dialog-title">controls</h2>
           <button type="button" class="dialog-close" id="btn-close-dialog">&times;</button>
         </div>
-        
+
         <div class="dialog-body">
           <div class="shortcut-line">
             <span class="key">space / click</span>

@@ -966,19 +966,4 @@
   const wakeLock = new PixelWakeLockManager();
   const engine = new PixelTimerEngine(sound, stats);
   new PixelUIController(engine, sound, stats, wakeLock);
-
-  // Reveal UI once font is ready to prevent Flash of Unstyled Text (FOUT)
-  const appEl = document.getElementById('app');
-  if (appEl) {
-    if ('fonts' in document) {
-      document.fonts.ready.then(() => {
-        appEl.classList.add('ready');
-      });
-      setTimeout(() => {
-        appEl.classList.add('ready');
-      }, 250);
-    } else {
-      appEl.classList.add('ready');
-    }
-  }
 })();
