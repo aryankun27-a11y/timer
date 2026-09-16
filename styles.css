@@ -2,6 +2,14 @@
    8-Bit Retro Pixel Timer Design System (Handjet Typography)
    ========================================================================== */
 
+@font-face {
+  font-family: 'Handjet';
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: block;
+  src: url('handjet.woff2') format('woff2');
+}
+
 :root {
   --font-pixel: 'Handjet', monospace;
   
@@ -59,6 +67,12 @@ html, body {
   padding: 2.5rem 3.25rem;
   position: relative;
   cursor: default;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.pixel-app.ready {
+  opacity: 1;
 }
 
 /* ==========================================================================

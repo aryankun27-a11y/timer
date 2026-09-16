@@ -6,14 +6,18 @@
   <title>timer</title>
   <meta name="description" content="A minimal 8-bit retro pixel monochrome timer, pomodoro & stopwatch.">
   
-  <!-- Handjet Pixel Font from Google Fonts -->
+  <!-- Preload local Handjet Pixel Font for instant, zero-flicker loading -->
+  <link rel="preload" href="handjet.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Handjet Pixel Font fallback from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@400..900&display=block" rel="stylesheet">
   
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
   <link rel="stylesheet" href="styles.css">
+  <noscript><style>.pixel-app { opacity: 1 !important; }</style></noscript>
 </head>
 <body>
 
