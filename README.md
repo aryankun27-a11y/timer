@@ -4,6 +4,24 @@ A minimal, self-made 8-bit retro pixel timer, Pomodoro tracker, and stopwatch de
 
 🌐 **Live Website**: [https://timer-three-psi-89.vercel.app/](https://timer-three-psi-89.vercel.app/)
 
+![Pixel Timer Hero Preview](screenshots/timer-mode.png)
+
+## 📸 Screenshots
+
+### Themes
+| Dark Theme | Light Theme |
+| :---: | :---: |
+| ![Dark Theme](screenshots/timer-mode.png) | ![Light Theme](screenshots/light-mode.png) |
+
+### Modes & Focus Display
+| Running Focus State | Pomodoro Tracker |
+| :---: | :---: |
+| ![Running Focus State](screenshots/running-focus.png) | ![Pomodoro Tracker](screenshots/pomodoro-mode.png) |
+
+| Stopwatch Mode | Controls & Shortcuts |
+| :---: | :---: |
+| ![Stopwatch Mode](screenshots/stopwatch-mode.png) | ![Controls Dialog](screenshots/shortcuts-dialog.png) |
+
 ## ✨ Features
 
 - **3 Modes**: Countdown Timer, Pomodoro Tracker (with 4-cycle indicator blocks), and Stopwatch.
