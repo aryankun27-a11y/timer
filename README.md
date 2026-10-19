@@ -29,8 +29,7 @@ A minimal, self-made 8-bit retro pixel timer, Pomodoro tracker, and stopwatch de
 - **Handjet Typography**: Crisp retro pixel font powered by Google Fonts.
 - **Dark & Light Themes**: Quick toggle (`T`) matching your aesthetic.
 - **Daily Focus Stats**: Automatically records daily focus time and active streaks in `localStorage`.
-- **Keyboard, Mouse & Mobile Touch Controls**: Built for speed (`Space` / tap to start/pause, swipe up/down or scroll wheel to adjust minutes, quick `[-5, -1, +1, +5]` touch buttons, `[reset]` button when paused, `M` for mode, `0-9` to type minutes directly, `E` or `[edit]` to set custom time).
-- **Full Mobile Optimization**: Safe-area support for iOS notches & home indicators, `100dvh` viewport handling, Web Audio unlock for mobile Safari, and zero horizontal overflow on small screens.
+- **Keyboard & Mouse Shortcuts**: Built for speed (`Space` to start/pause, `M` for mode, `0-9` to type minutes directly, `E` or double-click to edit custom time, scroll wheel to adjust minutes).
 
 ## 🚀 How to Use
 
@@ -38,22 +37,22 @@ No installation or dependencies required! You can use the timer directly online 
 
 👉 **[https://timer-three-psi-89.vercel.app/](https://timer-three-psi-89.vercel.app/)**
 
-## ⌨️ Controls & Shortcuts
+## ⌨️ Shortcuts
 
-| Action | Desktop Key / Mouse | Mobile / Touch |
-| --- | --- | --- |
-| Start / Pause | `Space` / Click | Tap anywhere on screen |
-| Adjust Minutes | `Scroll wheel` | Swipe Up / Down or tap `[-5] [-1] [+1] [+5]` |
-| Custom Time | `E` / Double-click | Tap `[edit]`, input time, tap `[set]` |
-| Direct Minutes | `0-9` (e.g. `5`, `25`) | Type on keyboard or use edit |
-| Restart / Reset | `R` | Tap `[reset]` (visible when paused/completed) |
-| Cycle Mode | `M` | Tap `timer` brand in header |
-| Toggle Theme | `T` | Tap `[light]` / `[dark]` in header |
-| Toggle Tick | `K` | Tap `[tick]` in header |
-| Toggle Sound | `S` | Tap `[sound]` in header |
-| Fullscreen | `F` | Browser fullscreen |
-| Help / Shortcuts | `?` | Tap `?` in header |
-| Close / Exit | `Esc` | Tap `×` or `[cancel]` |
+| Key | Action |
+| --- | --- |
+| `Space` / Click | Start / Pause |
+| `Scroll` | Adjust minutes (Timer & Pomodoro) |
+| `Double-click` / `E` | Edit custom time |
+| `0-9` | Type minutes directly (e.g. `5`, `25`) |
+| `R` | Restart / Reset |
+| `M` | Cycle Mode (Timer / Pomodoro / Stopwatch) |
+| `T` | Toggle Dark / Light Theme |
+| `K` | Toggle 1s Metronome Tick |
+| `S` | Toggle Sound Chime |
+| `F` | Toggle Fullscreen |
+| `?` | Show Shortcuts Help |
+| `Esc` | Close dialog or exit edit mode |
 
 ---
 

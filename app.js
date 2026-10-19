@@ -14,30 +14,6 @@
       this.audioCtx = null;
       this.soundEnabled = localStorage.getItem('pixel_timer_sound') !== 'false';
       this.tickEnabled = localStorage.getItem('pixel_timer_tick') === 'true';
-      this.bindAudioUnlock();
-    }
-
-    bindAudioUnlock() {
-      const unlock = () => {
-        this.initContext();
-        if (this.audioCtx && this.audioCtx.state === 'suspended') {
-          this.audioCtx.resume();
-        }
-        // Unlock Web Audio pipeline on iOS Safari with 1-sample silent buffer
-        try {
-          if (this.audioCtx) {
-            const buffer = this.audioCtx.createBuffer(1, 1, 22050);
-            const source = this.audioCtx.createBufferSource();
-            source.buffer = buffer;
-            source.connect(this.audioCtx.destination);
-            source.start(0);
-          }
-        } catch (e) {}
-      };
-
-      window.addEventListener('touchstart', unlock, { once: true, passive: true });
-      window.addEventListener('touchend', unlock, { once: true, passive: true });
-      window.addEventListener('pointerdown', unlock, { once: true, passive: true });
     }
 
     initContext() {
@@ -286,7 +262,7 @@
           this.videoElem.style.opacity = '0';
           this.videoElem.style.pointerEvents = 'none';
 
-          if ('captureStream' in canvas && typeof canvas.captureStream === 'function') {
+          if ('captureStream' in canvas) {
             this.videoElem.srcObject = canvas.captureStream(1);
           }
           document.body.appendChild(this.videoElem);
@@ -630,39 +606,19 @@
 
         digitsWrapper: document.getElementById('digits-wrapper'),
         pixelDigits: document.getElementById('pixel-digits'),
-        scrollTooltip: document.getElementById('scroll-tooltip'),
-
-        touchControls: document.getElementById('touch-controls'),
-        btnMinus5: document.getElementById('btn-minus-5'),
-        btnMinus1: document.getElementById('btn-minus-1'),
-        btnTouchEdit: document.getElementById('btn-touch-edit'),
-        btnPlus1: document.getElementById('btn-plus-1'),
-        btnPlus5: document.getElementById('btn-plus-5'),
-
-        actionControls: document.getElementById('action-controls'),
-        btnResetAction: document.getElementById('btn-reset-action'),
-
         timeEditOverlay: document.getElementById('time-edit-overlay'),
         timeInput: document.getElementById('time-input'),
-        btnEditSet: document.getElementById('btn-edit-set'),
-        btnEditCancel: document.getElementById('btn-edit-cancel'),
 
         dailyStats: document.getElementById('daily-stats')
       };
 
       this.isEditing = false;
-      this.suppressNextClick = false;
       this.keyBuffer = '';
       this.keyBufferTimeout = null;
 
       this.lastRenderedState = null;
       this.lastDisplayStr = '';
       this.lastDocTitle = '';
-
-      // Set mobile-friendly tooltip on touch devices
-      if (this.dom.scrollTooltip && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
-        this.dom.scrollTooltip.textContent = 'swipe or tap to adjust';
-      }
 
       this.initTheme();
       this.initSoundUI();
@@ -709,126 +665,11 @@
     }
 
     bindEvents() {
-      // Toggle Start / Pause on main area click/tap
+      // Toggle Start / Pause on main area click
       this.dom.mainArea.addEventListener('click', (e) => {
-        if (this.suppressNextClick) {
-          this.suppressNextClick = false;
-          return;
-        }
-        if (this.isEditing) return;
-        // Never toggle timer if clicking interactive controls
-        if (e.target.closest('button') || e.target.closest('input') || e.target.closest('dialog')) return;
+        if (e.target === this.dom.timeInput || this.isEditing) return;
         this.handleTogglePlay();
       });
-
-      // Touch swipe gestures on digits (mobile friendly)
-      let touchStartY = null;
-      let touchStartX = null;
-      let touchMoved = false;
-      let accumulatedDeltaY = 0;
-
-      this.dom.digitsWrapper.addEventListener('touchstart', (e) => {
-        if (this.engine.state !== 'idle' || this.engine.mode === 'stopwatch') return;
-        if (e.touches.length === 1) {
-          touchStartY = e.touches[0].clientY;
-          touchStartX = e.touches[0].clientX;
-          touchMoved = false;
-          accumulatedDeltaY = 0;
-        }
-      }, { passive: true });
-
-      this.dom.digitsWrapper.addEventListener('touchmove', (e) => {
-        if (this.engine.state !== 'idle' || this.engine.mode === 'stopwatch') return;
-        if (touchStartY === null || e.touches.length !== 1) return;
-
-        const currentY = e.touches[0].clientY;
-        const currentX = e.touches[0].clientX;
-        const diffY = touchStartY - currentY;
-        const diffX = Math.abs(currentX - touchStartX);
-
-        if (Math.abs(diffY) > 6 && Math.abs(diffY) > diffX) {
-          touchMoved = true;
-          accumulatedDeltaY += (touchStartY - currentY);
-          touchStartY = currentY;
-
-          const stepThreshold = 26;
-          if (Math.abs(accumulatedDeltaY) >= stepThreshold) {
-            const step = accumulatedDeltaY > 0 ? 1 : -1;
-            this.engine.adjustMinutes(step);
-            this.sound.playBeep(520, 0.03);
-            accumulatedDeltaY = 0;
-          }
-        }
-      }, { passive: true });
-
-      this.dom.digitsWrapper.addEventListener('touchend', () => {
-        touchStartY = null;
-        touchStartX = null;
-        if (touchMoved) {
-          this.suppressNextClick = true;
-          setTimeout(() => { this.suppressNextClick = false; }, 320);
-        }
-      }, { passive: true });
-
-      // Quick touch adjuster buttons
-      if (this.dom.btnMinus5) {
-        this.dom.btnMinus5.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.engine.adjustMinutes(-5);
-          this.sound.playBeep(480, 0.04);
-        });
-      }
-      if (this.dom.btnMinus1) {
-        this.dom.btnMinus1.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.engine.adjustMinutes(-1);
-          this.sound.playBeep(480, 0.04);
-        });
-      }
-      if (this.dom.btnTouchEdit) {
-        this.dom.btnTouchEdit.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.openTimeEdit();
-        });
-      }
-      if (this.dom.btnPlus1) {
-        this.dom.btnPlus1.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.engine.adjustMinutes(1);
-          this.sound.playBeep(520, 0.04);
-        });
-      }
-      if (this.dom.btnPlus5) {
-        this.dom.btnPlus5.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.engine.adjustMinutes(5);
-          this.sound.playBeep(560, 0.04);
-        });
-      }
-
-      // Reset Action button (visible when paused / completed)
-      if (this.dom.btnResetAction) {
-        this.dom.btnResetAction.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.engine.reset();
-          this.sound.playBeep(350, 0.08);
-        });
-      }
-
-      // Time Edit Action buttons
-      if (this.dom.btnEditSet) {
-        this.dom.btnEditSet.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.applyTimeEdit();
-        });
-      }
-      if (this.dom.btnEditCancel) {
-        this.dom.btnEditCancel.addEventListener('click', (e) => {
-          e.stopPropagation();
-          this.cancelTimeEdit();
-          this.sound.playBeep(350, 0.05);
-        });
-      }
 
       // Mouse Wheel on digits to adjust time (ignored in stopwatch mode)
       this.dom.digitsWrapper.addEventListener('wheel', (e) => {
@@ -891,13 +732,9 @@
         }
       });
 
-      // Time Edit Input blur (safely commit if user taps outside input)
-      this.dom.timeInput.addEventListener('blur', (e) => {
+      // Time Edit Input blur (clicking outside closes cleanly)
+      this.dom.timeInput.addEventListener('blur', () => {
         if (this.isEditing) {
-          // If focus moved to set or cancel button, let button handle it
-          if (e.relatedTarget === this.dom.btnEditSet || e.relatedTarget === this.dom.btnEditCancel) {
-            return;
-          }
           this.applyTimeEdit();
         }
       });
@@ -1003,14 +840,11 @@
       const snapshot = this.engine.getSnapshot();
       this.dom.timeInput.value = this.formatTimeString(snapshot.displaySeconds);
       this.dom.timeEditOverlay.style.display = 'flex';
-      if (this.dom.touchControls) this.dom.touchControls.style.display = 'none';
-      if (this.dom.actionControls) this.dom.actionControls.style.display = 'none';
       this.dom.timeInput.focus();
       this.dom.timeInput.select();
     }
 
     applyTimeEdit() {
-      if (!this.isEditing) return;
       const val = this.dom.timeInput.value.trim();
       const parts = val.split(':').map(n => parseInt(n, 10));
       let totalSec = 0;
@@ -1034,8 +868,6 @@
     cancelTimeEdit() {
       this.isEditing = false;
       this.dom.timeEditOverlay.style.display = 'none';
-      this.suppressNextClick = true;
-      setTimeout(() => { this.suppressNextClick = false; }, 250);
     }
 
     toggleNativeFullscreen() {
@@ -1083,30 +915,6 @@
       if (this.lastDisplayStr !== timeStr) {
         this.lastDisplayStr = timeStr;
         this.dom.pixelDigits.textContent = timeStr;
-      }
-
-      // Dynamic attribute for responsive font size scaling
-      const charLen = timeStr.length > 5 ? '8' : '5';
-      if (this.dom.pixelDigits.getAttribute('data-length') !== charLen) {
-        this.dom.pixelDigits.setAttribute('data-length', charLen);
-      }
-
-      // Quick touch controls visibility
-      if (this.dom.touchControls) {
-        if (state === 'idle' && mode !== 'stopwatch' && !this.isEditing) {
-          this.dom.touchControls.style.display = 'flex';
-        } else {
-          this.dom.touchControls.style.display = 'none';
-        }
-      }
-
-      // Action controls (Reset button) visibility
-      if (this.dom.actionControls) {
-        if ((state === 'paused' || state === 'completed') && !this.isEditing) {
-          this.dom.actionControls.style.display = 'flex';
-        } else {
-          this.dom.actionControls.style.display = 'none';
-        }
       }
 
       // Pomodoro Session Tracker

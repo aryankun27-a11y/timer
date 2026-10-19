@@ -36,10 +36,6 @@
    Reset & Base Setup
    ========================================================================== */
 
-/* ==========================================================================
-   Reset & Base Setup
-   ========================================================================== */
-
 *,
 *::before,
 *::after {
@@ -47,24 +43,18 @@
   margin: 0;
   padding: 0;
   user-select: none;
-  -webkit-user-select: none;
 }
 
 html,
 body {
   width: 100%;
   height: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: var(--font-pixel);
   overflow: hidden;
   transition: background-color 200ms ease, color 200ms ease;
   image-rendering: pixelated;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-text-size-adjust: 100%;
 }
 
 /* ==========================================================================
@@ -73,15 +63,11 @@ body {
 
 .pixel-app {
   width: 100vw;
-  width: 100%;
   height: 100vh;
-  height: 100dvh;
-  min-height: 100vh;
-  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: max(2.5rem, env(safe-area-inset-top)) max(3.25rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom)) max(3.25rem, env(safe-area-inset-left));
+  padding: 2.5rem 3.25rem;
   position: relative;
   cursor: default;
 }
@@ -102,7 +88,6 @@ body {
 .topbar-left {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
 }
 
 .topbar-right {
@@ -118,8 +103,6 @@ body {
   font-family: var(--font-pixel);
   cursor: pointer;
   padding: 0;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
   transition: opacity 150ms ease, transform 150ms ease;
 }
 
@@ -143,14 +126,11 @@ body {
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: lowercase;
-  padding: 0.25rem 0.5rem;
-  border-radius: 2px;
 }
 
 .btn-pixel-help {
   font-size: 1.85rem;
   font-weight: 700;
-  padding: 0.25rem;
 }
 
 /* ==========================================================================
@@ -168,10 +148,8 @@ body {
   justify-content: center;
   text-align: center;
   width: 100%;
-  max-width: 100vw;
   cursor: pointer;
   z-index: 5;
-  touch-action: manipulation;
 }
 
 /* Pomodoro Cycle Indicator */
@@ -206,10 +184,7 @@ body {
   align-items: center;
   justify-content: center;
   position: relative;
-  width: 100%;
-  max-width: 100vw;
   transition: transform var(--transition-expand);
-  touch-action: manipulation;
 }
 
 /* Opening state digits */
@@ -221,15 +196,7 @@ body {
   letter-spacing: 0.08em;
   color: var(--text-color);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  max-width: 100vw;
   transition: font-size var(--transition-expand);
-}
-
-/* Hours format (8 chars: 00:00:00) scales down dynamically */
-.pixel-digits[data-length="8"] {
-  font-size: clamp(4.5rem, 11vw, 8.5rem);
-  letter-spacing: 0.04em;
 }
 
 /* Scroll to adjust tooltip */
@@ -254,72 +221,6 @@ body {
   transform: translateY(0);
 }
 
-/* Quick Touch Adjuster Controls */
-.touch-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1.25rem;
-  z-index: 10;
-  transition: opacity var(--transition-expand), transform var(--transition-expand);
-}
-
-.touch-btn {
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--text-dim);
-  border: 1px dashed var(--text-dim);
-  padding: 0.35rem 0.65rem;
-  min-width: 44px;
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  touch-action: manipulation;
-  transition: all 120ms ease;
-}
-
-.touch-btn:hover,
-.touch-btn:active {
-  color: var(--text-color);
-  border-color: var(--text-color);
-  background-color: var(--progress-track);
-  transform: scale(0.96);
-}
-
-/* Paused / Completed Action Controls (Reset Button) */
-.action-controls {
-  margin-top: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  z-index: 10;
-}
-
-.action-pill-btn {
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--text-color);
-  border: 2px dashed var(--border-color);
-  padding: 0.4rem 1.25rem;
-  min-height: 44px;
-  min-width: 100px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  touch-action: manipulation;
-  transition: all 120ms ease;
-}
-
-.action-pill-btn:hover,
-.action-pill-btn:active {
-  background-color: var(--progress-track);
-  transform: scale(0.96);
-}
 
 /* Inline Time Edit Overlay */
 .time-edit-overlay {
@@ -327,8 +228,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  z-index: 20;
+  gap: 0.5rem;
 }
 
 .time-edit-overlay input {
@@ -339,35 +239,9 @@ body {
   font-size: 2.5rem;
   font-weight: 700;
   text-align: center;
-  width: min(220px, 80vw);
+  width: 200px;
   padding: 0.4rem;
   outline: none;
-  border-radius: 0;
-  -webkit-appearance: none;
-  touch-action: manipulation;
-}
-
-.time-edit-actions {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.edit-action-btn {
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 0.35rem 0.85rem;
-  min-height: 40px;
-  min-width: 65px;
-  border: 1px dashed var(--border-color);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.edit-action-btn:hover,
-.edit-action-btn:active {
-  background-color: var(--progress-track);
 }
 
 .edit-hint {
@@ -407,14 +281,11 @@ body {
 }
 
 /* ==========================================================================
-   Running / Active State
+   Running / Active State (Image 2: Massive Fullscreen Display)
    ========================================================================== */
 
 .pixel-app[data-state="running"] .app-topbar,
-.pixel-app[data-state="running"] .bottom-stats-row,
-.pixel-app[data-state="running"] .touch-controls,
-.pixel-app[data-state="running"] .scroll-tooltip,
-.pixel-app[data-state="running"] .action-controls {
+.pixel-app[data-state="running"] .bottom-stats-row {
   opacity: 0;
   pointer-events: none;
   transform: translateY(-8px);
@@ -426,11 +297,6 @@ body {
   letter-spacing: 0.06em;
 }
 
-.pixel-app[data-state="running"] .pixel-digits[data-length="8"] {
-  font-size: clamp(7.5rem, 20vw, 16rem);
-  letter-spacing: 0.03em;
-}
-
 /* Paused State */
 .pixel-app[data-state="paused"] .pixel-digits {
   font-size: clamp(12rem, 30vw, 24rem);
@@ -439,13 +305,8 @@ body {
   animation: pixelBlink 1.4s infinite;
 }
 
-.pixel-app[data-state="paused"] .pixel-digits[data-length="8"] {
-  font-size: clamp(7.5rem, 20vw, 16rem);
-  letter-spacing: 0.03em;
-  animation: pixelBlink 1.4s infinite;
-}
-
 @keyframes pixelBlink {
+
   0%,
   100% {
     opacity: 1;
@@ -462,6 +323,7 @@ body {
 }
 
 @keyframes completeFlash {
+
   0%,
   100% {
     opacity: 1;
@@ -477,18 +339,14 @@ body {
    ========================================================================== */
 
 .pixel-dialog {
-  border: 2px solid var(--border-color);
+  border: 3px solid var(--border-color);
   background-color: var(--bg-color);
   color: var(--text-color);
   padding: 0;
   max-width: 460px;
-  width: min(calc(100% - 2rem), 460px);
-  max-height: 85vh;
-  max-height: 85dvh;
+  width: calc(100% - 3rem);
   margin: auto;
   z-index: 99;
-  overflow: hidden;
-  border-radius: 0;
 }
 
 .pixel-dialog::backdrop {
@@ -496,19 +354,16 @@ body {
 }
 
 .dialog-content {
-  padding: 1.5rem 1.75rem;
+  padding: 1.75rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  max-height: 85dvh;
-  overflow: hidden;
+  gap: 1.5rem;
 }
 
 .dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-shrink: 0;
 }
 
 .dialog-header h2 {
@@ -523,16 +378,9 @@ body {
   border: none;
   color: var(--text-color);
   font-family: var(--font-pixel);
-  font-size: 2rem;
+  font-size: 1.85rem;
   cursor: pointer;
-  padding: 0.25rem;
-  min-width: 44px;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  touch-action: manipulation;
+  padding: 0;
 }
 
 .dialog-close:hover {
@@ -542,10 +390,7 @@ body {
 .dialog-body {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-right: 0.35rem;
+  gap: 0.85rem;
 }
 
 .shortcut-line {
@@ -555,7 +400,7 @@ body {
   font-size: 1.05rem;
   font-weight: 500;
   letter-spacing: 0.04em;
-  padding-bottom: 0.35rem;
+  padding-bottom: 0.4rem;
   border-bottom: 1px dashed var(--border-color);
 }
 
@@ -574,161 +419,28 @@ body {
 }
 
 /* ==========================================================================
-   Responsive Adaptations (Tablet & Mobile)
+   Responsive Adaptations
    ========================================================================== */
 
 @media (max-width: 768px) {
   .pixel-app {
-    padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(1.25rem, env(safe-area-inset-bottom)) max(1.25rem, env(safe-area-inset-left));
-  }
-
-  .app-topbar {
-    gap: 0.5rem;
-  }
-
-  .topbar-left {
-    flex-shrink: 0;
-  }
-
-  .topbar-right {
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
+    padding: 1.5rem 1.5rem;
   }
 
   .pixel-brand {
-    font-size: 1.6rem;
+    font-size: 1.75rem;
   }
 
   .top-pill-btn {
-    font-size: 0.95rem;
-    padding: 0.2rem 0.35rem;
-    min-height: 36px;
-    display: inline-flex;
-    align-items: center;
+    font-size: 1.05rem;
   }
 
-  .btn-pixel-help {
-    font-size: 1.4rem;
-    min-width: 36px;
-    min-height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .pomo-tracker {
-    font-size: 1.15rem;
-    margin-bottom: 0.4rem;
-  }
-
-  /* Responsive Digits: massive full screen presence */
   .pixel-digits {
     font-size: clamp(5rem, 20vw, 8.5rem);
-    line-height: 0.9;
   }
 
   .pixel-app[data-state="running"] .pixel-digits,
   .pixel-app[data-state="paused"] .pixel-digits {
     font-size: clamp(8rem, 28vw, 15rem);
-    line-height: 0.9;
-  }
-
-  .pixel-digits[data-length="8"] {
-    font-size: clamp(3.2rem, 13vw, 5.5rem);
-    letter-spacing: 0.02em;
-  }
-
-  .pixel-app[data-state="running"] .pixel-digits[data-length="8"],
-  .pixel-app[data-state="paused"] .pixel-digits[data-length="8"] {
-    font-size: clamp(4.8rem, 18vw, 9rem);
-    letter-spacing: 0.02em;
-  }
-
-  .touch-controls {
-    gap: 0.35rem;
-    margin-top: 0.75rem;
-  }
-
-  .touch-btn {
-    font-size: 1.05rem;
-    padding: 0.3rem 0.5rem;
-    min-width: 40px;
-    min-height: 38px;
-  }
-
-  .action-pill-btn {
-    font-size: 1.2rem;
-    padding: 0.35rem 1rem;
-    min-height: 40px;
-  }
-
-  .daily-stats {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .pixel-app {
-    padding: max(0.85rem, env(safe-area-inset-top)) max(0.85rem, env(safe-area-inset-right)) max(0.85rem, env(safe-area-inset-bottom)) max(0.85rem, env(safe-area-inset-left));
-  }
-
-  .pixel-brand {
-    font-size: 1.35rem;
-  }
-
-  .topbar-right {
-    gap: 0.3rem;
-  }
-
-  .top-pill-btn {
-    font-size: 0.85rem;
-    padding: 0.15rem 0.25rem;
-  }
-
-  .touch-btn {
-    font-size: 0.95rem;
-    padding: 0.25rem 0.45rem;
-    min-width: 36px;
-    min-height: 36px;
-  }
-
-  .action-pill-btn {
-    font-size: 1.15rem;
-    padding: 0.35rem 0.9rem;
-  }
-
-  .daily-stats {
-    font-size: 0.9rem;
-  }
-}
-
-/* Compact layout for landscape phones */
-@media (max-height: 500px) and (orientation: landscape) {
-  .pixel-app {
-    padding: max(0.5rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(0.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
-  }
-
-  .pixel-digits {
-    font-size: clamp(3.5rem, 15vh, 6rem);
-  }
-
-  .pixel-app[data-state="running"] .pixel-digits,
-  .pixel-app[data-state="paused"] .pixel-digits {
-    font-size: clamp(6.5rem, 48vh, 14rem);
-  }
-
-  .pixel-app[data-state="running"] .pixel-digits[data-length="8"],
-  .pixel-app[data-state="paused"] .pixel-digits[data-length="8"] {
-    font-size: clamp(4rem, 32vh, 9rem);
-  }
-
-  .touch-controls {
-    margin-top: 0.25rem;
-    gap: 0.35rem;
-  }
-
-  .scroll-tooltip {
-    display: none;
   }
 }
