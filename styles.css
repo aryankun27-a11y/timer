@@ -421,26 +421,26 @@ body {
 }
 
 .pixel-app[data-state="running"] .pixel-digits {
-  font-size: clamp(10rem, 28vw, 22rem);
+  font-size: clamp(12rem, 30vw, 24rem);
   font-weight: 800;
   letter-spacing: 0.06em;
 }
 
 .pixel-app[data-state="running"] .pixel-digits[data-length="8"] {
-  font-size: clamp(6.5rem, 18vw, 15rem);
+  font-size: clamp(7.5rem, 20vw, 16rem);
   letter-spacing: 0.03em;
 }
 
 /* Paused State */
 .pixel-app[data-state="paused"] .pixel-digits {
-  font-size: clamp(10rem, 28vw, 22rem);
+  font-size: clamp(12rem, 30vw, 24rem);
   font-weight: 800;
   letter-spacing: 0.06em;
   animation: pixelBlink 1.4s infinite;
 }
 
 .pixel-app[data-state="paused"] .pixel-digits[data-length="8"] {
-  font-size: clamp(6.5rem, 18vw, 15rem);
+  font-size: clamp(7.5rem, 20vw, 16rem);
   letter-spacing: 0.03em;
   animation: pixelBlink 1.4s infinite;
 }
@@ -622,26 +622,26 @@ body {
     margin-bottom: 0.4rem;
   }
 
-  /* Responsive Digits: guaranteed never to overflow horizontally */
+  /* Responsive Digits: massive full screen presence */
   .pixel-digits {
-    font-size: clamp(4.25rem, 18vw, 7.5rem);
+    font-size: clamp(5rem, 20vw, 8.5rem);
     line-height: 0.9;
   }
 
   .pixel-app[data-state="running"] .pixel-digits,
   .pixel-app[data-state="paused"] .pixel-digits {
-    font-size: clamp(5.25rem, 23vw, 11rem);
+    font-size: clamp(8rem, 28vw, 15rem);
     line-height: 0.9;
   }
 
   .pixel-digits[data-length="8"] {
-    font-size: clamp(2.8rem, 11vw, 5rem) !important;
+    font-size: clamp(3.2rem, 13vw, 5.5rem);
     letter-spacing: 0.02em;
   }
 
   .pixel-app[data-state="running"] .pixel-digits[data-length="8"],
   .pixel-app[data-state="paused"] .pixel-digits[data-length="8"] {
-    font-size: clamp(3.5rem, 14vw, 7rem) !important;
+    font-size: clamp(4.8rem, 18vw, 9rem);
     letter-spacing: 0.02em;
   }
 
@@ -710,12 +710,17 @@ body {
   }
 
   .pixel-digits {
-    font-size: clamp(3rem, 12vh, 5.5rem);
+    font-size: clamp(3.5rem, 15vh, 6rem);
   }
 
   .pixel-app[data-state="running"] .pixel-digits,
   .pixel-app[data-state="paused"] .pixel-digits {
-    font-size: clamp(4.5rem, 30vh, 8rem);
+    font-size: clamp(6.5rem, 48vh, 14rem);
+  }
+
+  .pixel-app[data-state="running"] .pixel-digits[data-length="8"],
+  .pixel-app[data-state="paused"] .pixel-digits[data-length="8"] {
+    font-size: clamp(4rem, 32vh, 9rem);
   }
 
   .touch-controls {
